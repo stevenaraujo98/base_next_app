@@ -1,0 +1,12 @@
+{
+	"extends": ["next/core-web-vitals", "eslint-config-prettier"],
+	"plugins": ["react", "prettier"],
+	"settings": {
+		"react": {
+			"version": "detect"
+		}
+	},
+	"rules": {
+		"properties": "never" // no solo permita camelcase
+	}
+}
