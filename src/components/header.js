@@ -2,13 +2,13 @@
 import { options } from "@/utils/headers_options";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { SigninButton } from "./SigninButton";
 import { getSession, useSession } from "next-auth/react";
 import { validateTypeUser } from "@/utils/user";
 import { useEffect, useState } from "react";
 
-const Header = ({ user }) => {
+const Header = props => {
 	const [typeUser, setTypeUser] = useState(0);
 	const pathname = usePathname();
 	const { status, data: session } = useSession();

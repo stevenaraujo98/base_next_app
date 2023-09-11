@@ -4,6 +4,7 @@ import Header from "@/components/header";
 import Footer from "@/components/footer";
 import Providers from "@/context/Providers";
 import { Toaster } from "./Toaster";
+// import Sidebar from "@/components/sidebar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +17,9 @@ export default function RootLayout({ children }) {
 	return (
 		<html lang="en">
 			<body className={inter.className}>
-				<div className="flex flex-col min-h-screen">
+				{/* <Sidebar /> */}
+				{/* pl-16 lg:pl-64 */}
+				<div className="w-full min-h-screen flex flex-col">
 					<Providers>
 						<Header />
 						<Toaster

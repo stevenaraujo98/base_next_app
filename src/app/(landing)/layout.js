@@ -3,7 +3,7 @@ import Footer from "@/components/footer";
 const Layout = ({ children }) => {
 	return (
 		<>
-			{children}
+			<div className="flex-grow ">{children}</div>
 			<Footer />
 		</>
 	);

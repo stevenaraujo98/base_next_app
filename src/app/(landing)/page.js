@@ -18,7 +18,7 @@ const images = [
 
 export default function Home() {
 	return (
-		<div className="mx-8 self-center justify-items-center content-center ">
+		<div className="mx-8 my-6 self-center justify-items-center content-center ">
 			<Carousel images={images} />
 			<div className="grid justify-items-center grid-cols-3 gap-3 mt-10">
 				<Cards
