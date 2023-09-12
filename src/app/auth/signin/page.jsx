@@ -28,7 +28,7 @@ const Login = () => {
 			if (result.ok) {
 				console.log(result);
 				// result.ok   result.status === 200
-				router.push("/");
+				router.push("/admin");
 				toast.success("Inicio de sesión exitoso");
 			} else {
 				// result.error

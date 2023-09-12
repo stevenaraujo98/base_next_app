@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
-import { validateTypeUser } from "./utils/user";
+import { verifyJwtToken } from "@/lib/auth";
 
 // si se necesita ejecutar aqui en el middleware se usa https://www.npmjs.com/package/jose
 // import { jwtVerify } from "jose"; // await jwtVerify(token, new TextDecoder().encode(secret), { algorithms: ["HS256"] });
+// no se puede usar https://www.npmjs.com/package/jsonwebtoken
 // import jwt from "jsonwebtoken";
 
 // This function can be marked `async` if using `await` inside
@@ -15,11 +16,11 @@ export async function middleware(request) {
 	if (request.cookies.has("next-auth.session-token")) {
 		const cookie = request.cookies.get("next-auth.session-token");
 		const sessionToken = cookie.value;
-
 		// console.log("Token encontrado:", sessionToken);
-		const typeUser = validateTypeUser(sessionToken);
-		console.log(typeUser === 3 && request.nextUrl.pathname === "/client");
-		console.log(typeUser === 1 && request.nextUrl.pathname === "/admin");
+
+		const hasVerifiedToken = sessionToken && (await verifyJwtToken(sessionToken));
+		const role = JSON.parse(hasVerifiedToken.role);
+		const typeUser = role.isAdmin ? 1 : role.isLawyer ? 2 : 3;
 
 		if (request.nextUrl.pathname === "/admin" && typeUser === 1) {
 			console.log("admin");
@@ -32,6 +33,7 @@ export async function middleware(request) {
 
 		// path "/" ya que se sabe es un usuario
 		if (request.nextUrl.pathname == "/" || (request.nextUrl.pathname.startsWith("/client") && typeUser !== 3)) {
+			console.log("/", typeUser === 1);
 			if (typeUser === 1) {
 				return NextResponse.redirect(new URL("/admin/usuarios", request.url));
 			}

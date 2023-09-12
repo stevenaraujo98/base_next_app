@@ -2,7 +2,7 @@
 const host = process.env.NEXT_AUTH_HOST;
 const db = process.env.DB_HOST;
 
-const page = () => {
+const Page = () => {
 	const handldclick = () => {
 		console.log("ALGO", host, db);
 	};
@@ -57,4 +57,4 @@ const page = () => {
 	);
 };
 
-export default page;
+export default Page;
