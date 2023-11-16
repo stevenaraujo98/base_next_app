@@ -1,53 +1,94 @@
 import { NextResponse } from "next/server";
-import { verifyJwtToken } from "@/lib/auth";
+import { validateTypeUser } from "./utils/user";
+import { i18n } from "./i18n/i18n.config";
+import createMiddleware from "next-intl/middleware";
 
 // si se necesita ejecutar aqui en el middleware se usa https://www.npmjs.com/package/jose
 // import { jwtVerify } from "jose"; // await jwtVerify(token, new TextDecoder().encode(secret), { algorithms: ["HS256"] });
-// no se puede usar https://www.npmjs.com/package/jsonwebtoken
 // import jwt from "jsonwebtoken";
+
+const locales = i18n.locales;
+const defaultLocale = i18n.defaultLocale;
+
+export default createMiddleware({
+	locales,
+	defaultLocale,
+});
 
 // This function can be marked `async` if using `await` inside
 // este middleware evita el error con lastpass
 export async function middleware(request) {
-	// console.log(request.url);
-	console.log("middleware", request.nextUrl.pathname, request.nextUrl.pathname.includes("/client"));
+	const { nextUrl, url, cookies } = request;
+	const pathname = nextUrl.pathname;
 
 	// Verificar si se encontró el token
-	if (request.cookies.has("next-auth.session-token")) {
-		const cookie = request.cookies.get("next-auth.session-token");
-		const sessionToken = cookie.value;
-		// console.log("Token encontrado:", sessionToken);
+	if (cookies.has("next-auth.session-token")) {
+		const { value: sessionToken } = cookies.get("next-auth.session-token");
 
-		const hasVerifiedToken = sessionToken && (await verifyJwtToken(sessionToken));
-		const role = JSON.parse(hasVerifiedToken.role);
-		const typeUser = role.isAdmin ? 1 : role.isLawyer ? 2 : 3;
+		const typeUser = await validateTypeUser(sessionToken);
 
-		if (request.nextUrl.pathname === "/admin" && typeUser === 1) {
-			console.log("admin");
-			return NextResponse.rewrite(new URL("/admin/usuarios", request.url));
+		// termina en admin y es tipo  administrador
+		if (!!pathname.match(/\/(admin)$/) && typeUser === 1) {
+			return NextResponse.rewrite(
+				// si esta en la lista de los idiomas y si no esta. Va con el default ya que necesita el idioma
+				new URL(`${!locales.includes(pathname.slice(1, 3)) && defaultLocale}${pathname}/usuarios`, url),
+			);
 		}
-		if (request.nextUrl.pathname === "/client" && typeUser === 3) {
-			console.log("client");
-			return NextResponse.rewrite(new URL("/client/dashboard", request.url));
+
+		// termina en client y es tipo  cliente
+		if (!!pathname.match(/\/(client)$/) && typeUser === 3) {
+			return NextResponse.rewrite(
+				// si esta en la lista de los idiomas y si no esta. Va con el default ya que necesita el idioma
+				new URL(`${!locales.includes(pathname.slice(1, 3)) && defaultLocale}${pathname}/dashboard`, url),
+			);
 		}
 
 		// path "/" ya que se sabe es un usuario
-		if (request.nextUrl.pathname == "/" || (request.nextUrl.pathname.startsWith("/client") && typeUser !== 3)) {
-			console.log("/", typeUser === 1);
+		if (
+			pathname === "/" ||
+			locales.includes(pathname.slice(1)) ||
+			(!!pathname.match(/\/(admin)$/) && typeUser !== 1) ||
+			(!!pathname.match(/\/(client)$/) && typeUser !== 3)
+		) {
 			if (typeUser === 1) {
-				return NextResponse.redirect(new URL("/admin/usuarios", request.url));
+				return NextResponse.redirect(
+					new URL(`${locales.includes(pathname.slice(1, 3)) ? pathname : ""}/admin/usuarios`, url),
+				);
+			}
+			if (typeUser === 3) {
+				return NextResponse.redirect(
+					// si esta dentro de los idiomas retorna el pathname tal cual sino esta es un "/" por lo cual se envia vacio para el default
+					new URL(`${locales.includes(pathname.slice(1, 3)) ? pathname : ""}/client/dashboard`, url),
+				);
 			}
 		}
 	} else {
 		console.log("Token no encontrado en las cookies.");
-		if (request.nextUrl.pathname.startsWith("/client") || request.nextUrl.pathname.startsWith("/admin")) {
-			const requestedPage = request.nextUrl.pathname;
-			const url = request.nextUrl.clone();
-			url.pathname = "/auth/signIn";
-			url.search = `p=${requestedPage}`;
+		// [termina en] no es client or admin or lawyer
+		if (!!pathname.match(/\/(client|admin|lawyer)$/)) {
+			const searchParams = new URLSearchParams(nextUrl.searchParams);
+			searchParams.set("next", pathname);
 
+			// const requestedPage = pathname;
+			const url = nextUrl.clone();
+			url.pathname = "/auth/signin";
+			url.search = searchParams;
 			return NextResponse.redirect(url);
 		}
+	}
+
+	// Verifica el locale, si no lo tiene
+	const pahtnameIsMissingLocale = locales.every(local => !pathname.startsWith(`/${local}`));
+
+	// el que no tiene el locale y (no termine en) => [no es una imagen y no es client or admin or lawyer]
+	// "!!" convierte el valor a booleano y ! para obtener la negacion
+	if (
+		pahtnameIsMissingLocale &&
+		!!!pathname.match(/(\.(jpg|png|svg)$)/) &&
+		!!!pathname.match(/\/(client|admin|lawyer)$/)
+	) {
+		// cuando no tiene la ruta para el idioma se agrega el default
+		return NextResponse.rewrite(new URL(`/${defaultLocale}${pathname}`, url));
 	}
 
 	return NextResponse.next();
@@ -55,5 +96,5 @@ export async function middleware(request) {
 
 // See "Matching Routes" section below to learn more
 export const config = {
-	matcher: ["/", "/client/:path*", "/admin/:path*"],
+	matcher: ["/", "/client/:path*", "/admin/:path*", "/((?!api|_next/static|_next/image|assets|favicon.ico|sw.js).*)"],
 };

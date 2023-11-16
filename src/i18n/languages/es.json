@@ -1,0 +1,31 @@
+{
+    "Contracts": {
+        "title": "Título"
+    },
+    "hello": "Hola",
+    "home": "Inicio",
+    "Index": {
+        "about": "Nosotros",
+        "dashboard": "Dashboard",
+        "documents": "Documentos",
+        "history": "Historial",
+        "login": "Iniciar sesión",
+        "prices": "Precios",
+        "requests": "Solicitudes",
+        "start": "Inicio",
+        "title": "Hola mundo!",
+        "users": "Usuarios"
+    },
+    "Login": {
+        "doNotHaveAnAccount": "¿No tienes una cuenta?",
+        "email": "Correo electrónico",
+        "forgot": "Olvidaste tu contraseña?",
+        "login": "Iniciar sesión",
+        "password": "Contraseña",
+        "register": "Registro",
+        "title": "Iniciar Sesión",
+        "signUp": "Regístrate",
+        "username": "Nombre de usaurio"
+    },
+    "message": "Hola {name}!"
+}

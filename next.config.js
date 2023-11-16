@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+	skipMiddlewareUrlNormalize: true,
 	images: {
 		domains: [
 			"upload.wikimedia.org",
@@ -7,6 +8,7 @@ const nextConfig = {
 			"images.unsplash.com",
 			"www.presuntoinocente.com",
 			"cdn.pixabay.com",
+			"res.cloudinary.com",
 		],
 	},
 };

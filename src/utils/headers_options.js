@@ -5,30 +5,45 @@
 export const options = [
 	[
 		{
-			name: "Inicio",
+			name: "start",
 			path: "/",
 		},
 		{
-			name: "Documentos",
+			name: "documents",
 			path: "/documentos",
 		},
 		{
-			name: "Precios",
+			name: "prices",
 			path: "/precios",
 		},
 		{
-			name: "Nosotros",
+			name: "about",
 			path: "/nosotros",
 		},
 	],
 	[
 		{
-			name: "Usuarios",
+			name: "users",
 			path: "/admin/usuarios",
 		},
 		{
-			name: "Dashboard",
+			name: "dashboard",
 			path: "/admin/dashboard",
+		},
+	],
+	[],
+	[
+		{
+			name: "dashboard",
+			path: "/client/dashboard",
+		},
+		{
+			name: "history",
+			path: "/client/historial",
+		},
+		{
+			name: "requests",
+			path: "/client/solicitudes",
 		},
 	],
 ];
