@@ -2,12 +2,22 @@
 import { store } from "@/redux/store";
 import { SessionProvider } from "next-auth/react";
 import { Provider } from "react-redux";
+import { NextIntlClientProvider } from "next-intl";
+import { ThemeProvider } from "./theme-provider";
 
-const Providers = ({ children, session }) => {
+const Providers = ({ children, session, lang, messages }) => {
 	return (
-		<Provider store={store}>
-			<SessionProvider session={session}>{children}</SessionProvider>
-		</Provider>
+		// Language
+		<NextIntlClientProvider locale={lang} messages={messages}>
+			{/* Theme and Style */}
+			<ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+				{/* Redux */}
+				<Provider store={store}>
+					{/* Session */}
+					<SessionProvider session={session}>{children}</SessionProvider>
+				</Provider>
+			</ThemeProvider>
+		</NextIntlClientProvider>
 	);
 };
 

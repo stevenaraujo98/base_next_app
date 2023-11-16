@@ -3,9 +3,11 @@ import Cards from "@/components/cards";
 import ElasticCarousel from "@/components/ElasticCarousel";
 // import { getDictionary } from "@/app/dictionaries";
 import items from "../../../../public/items.json";
+import { useTranslations } from "next-intl";
 
 export default function Home({ params: { lang } }) {
 	// const dict = await getDictionary(lang);
+	const t = useTranslations();
 
 	return (
 		<div className="mx-8 my-6 self-center justify-items-center content-center ">
@@ -25,6 +27,7 @@ export default function Home({ params: { lang } }) {
 			</ElasticCarousel>
 
 			<p className="bg-red-400 dark:bg-slate-900 font-sans">{"dict.hello"}</p>
+			<p className="bg-red-400 dark:bg-slate-900 font-sans">{t("hello")}</p>
 			<div className="grid justify-items-center grid-cols-3 gap-3 mt-10">
 				<Cards
 					image="https://www.presuntoinocente.com/wp-content/uploads/2022/12/que-es-un-abogado-penalista-1536x691.jpg"

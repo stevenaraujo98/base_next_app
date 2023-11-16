@@ -2,7 +2,7 @@
 import dynamic from "next/dynamic";
 // para importar en el layout del lado del cliente
 
-export const Toaster = dynamic(
+const Toaster = dynamic(
 	async () => {
 		const { Toaster } = await import("react-hot-toast");
 		return Toaster;
@@ -11,3 +11,5 @@ export const Toaster = dynamic(
 		ssr: false,
 	},
 );
+
+export default Toaster;
